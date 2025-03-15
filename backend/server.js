@@ -1,4 +1,5 @@
 import express, { urlencoded } from 'express';
+import path from 'path';
 import dotenv from 'dotenv';
 
 import authRoutes from './routes/auth.routes.js';
@@ -19,8 +20,9 @@ cloudinary.config({
 
 const app = express();
 const PORT = process.env.PORT;
+const __dirname = path.resolve();
 
-app.use(express.json({limit: "5mb"})); // to parse req.body
+app.use(express.json({ limit: "5mb" })); // to parse req.body
 // default limit is 100kb 
 // limit should not be too high to prevent DOS attack (Denial of service)
 app.use(urlencoded({ extended: true })) // more convinient than json. FORM DATA(urlencoded) parsing
@@ -30,6 +32,14 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/notifications", notificationRoutes);
+
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+    });
+}
 
 app.listen(PORT, () => {
     console.log(`Server is listening on port http://localhost:${PORT}`);
