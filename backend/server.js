@@ -20,7 +20,9 @@ cloudinary.config({
 const app = express();
 const PORT = process.env.PORT;
 
-app.use(express.json()); // to parse req.body
+app.use(express.json({limit: "5mb"})); // to parse req.body
+// default limit is 100kb 
+// limit should not be too high to prevent DOS attack (Denial of service)
 app.use(urlencoded({ extended: true })) // more convinient than json. FORM DATA(urlencoded) parsing
 app.use(cookieParser());
 
