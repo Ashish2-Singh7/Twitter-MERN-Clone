@@ -10,12 +10,19 @@ import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 
 import LoadingSpinner from './LoadingSpinner.jsx';
+import { formatPostDate } from "../../utils/date/index.js";
 
 
 const Post = ({ post }) => {
     const [comment, setComment] = useState("");
     const queryClient = useQueryClient();
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+    const postOwner = post.user;
+    const isLiked = post.likes.includes(authUser._id);
+
+    const isMyPost = authUser._id === post.user._id;
+
+    const formattedDate = formatPostDate(post.createdAt);
 
     const { mutate: deletePost, isPending: isDeleting } = useMutation({
         mutationFn: async () => {
@@ -71,14 +78,46 @@ const Post = ({ post }) => {
         }
     });
 
-    const postOwner = post.user;
-    const isLiked = post.likes.includes(authUser._id);
+    const { mutate: commentPost, isPending: isCommenting } = useMutation({
+        mutationFn: async () => {
+            try {
+                const res = await fetch(`/api/posts/comment/${post._id}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ text: comment }),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Something went wrong");
 
-    const isMyPost = authUser._id === post.user._id;
+                return data;
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+        onSuccess: (updatedComments) => {
+            toast.success("Comment posted successfully");
+            setComment("");
 
-    const formattedDate = "1h";
+            // METHOD 1:- Refetching the post on every comment 
+            // queryClient.invalidateQueries({ queryKey: ["posts"] });
 
-    const isCommenting = false;
+            // METHOD 2:- updating comments without refetching (Better user experience)
+            queryClient.setQueryData(["posts"], (oldData) => {
+                return oldData.map((p) => {
+                    if (p._id === post._id) {
+                        return { ...p, comments: updatedComments }
+                    }
+                    return p;
+                });
+            });
+        },
+        onError: (error) => {
+            toast.error(error.message);
+        }
+    })
 
     const handleDeletePost = () => {
         deletePost();
@@ -86,6 +125,8 @@ const Post = ({ post }) => {
 
     const handlePostComment = (e) => {
         e.preventDefault();
+        if (isCommenting) return;
+        commentPost();
     };
 
     const handleLikePost = () => {
