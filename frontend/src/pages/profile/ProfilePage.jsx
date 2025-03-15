@@ -5,18 +5,16 @@ import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton.jsx";
 import EditProfileModal from "./EditProfileModal";
 
-import { POSTS } from "../../utils/db/dummy";
-
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { formatMemberSinceDate } from "../../utils/date/index.js";
 
 import useFollow from '../../hooks/useFollow.jsx';
-import toast from "react-hot-toast";
+import useUpdateUserProfile from "../../hooks/useUpdateUserProfile.jsx";
 
 const ProfilePage = () => {
     const [coverImg, setCoverImg] = useState(null);
@@ -30,8 +28,6 @@ const ProfilePage = () => {
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
     const { follow, isPending } = useFollow();
-
-    const queryClient = useQueryClient();
 
     const { data: user, isLoading, refetch, isRefetching } = useQuery({
         queryKey: ["userProfile"],
@@ -48,36 +44,8 @@ const ProfilePage = () => {
         }
     });
 
-    const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
-        mutationFn: async () => {
-            try {
-                const res = await fetch("/api/users/update", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ profileImg, coverImg }),
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || "Something went error");
-                return data;
-            } catch (error) {
-                console.log(error);
-                throw error;
-            }
-        },
-        onSuccess: () => {
-            toast.success("Profile updated successfully");
-            // to invalidate them parallely
-            Promise.all([
-                queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-                queryClient.invalidateQueries({ queryKey: ["userProfile"] })
-            ]);
-        },
-        onError: (error) => {
-            toast.error(error.message);
-        }
-    });
+
+    const { updateProfile, isUpdatingProfile } = useUpdateUserProfile();
 
     const isMyProfile = authUser._id === user?._id;
     const memberSinceDate = formatMemberSinceDate(user?.createdAt);
@@ -113,7 +81,7 @@ const ProfilePage = () => {
                                 </Link>
                                 <div className='flex flex-col'>
                                     <p className='font-bold text-lg'>{user?.fullName}</p>
-                                    <span className='text-sm text-slate-500'>{POSTS?.length} posts</span>
+                                    <span className='text-sm text-slate-500'>4 posts</span>
                                 </div>
                             </div>
                             {/* COVER IMG */}
@@ -162,7 +130,7 @@ const ProfilePage = () => {
                                 </div>
                             </div>
                             <div className='flex justify-end px-4 mt-5'>
-                                {isMyProfile && <EditProfileModal authUser={authUser}/>}
+                                {isMyProfile && <EditProfileModal authUser={authUser} />}
                                 {!isMyProfile && (
                                     <button
                                         className='btn btn-outline rounded-full btn-sm'
@@ -176,7 +144,11 @@ const ProfilePage = () => {
                                 {(coverImg || profileImg) && (
                                     <button
                                         className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
-                                        onClick={() => updateProfile()}
+                                        onClick={async () => {
+                                            await updateProfile({ profileImg, coverImg });
+                                            setProfileImg(null);
+                                            setCoverImg(null);
+                                        }}
                                     >
                                         {isUpdatingProfile ? "Updating..." : "Update"}
                                     </button>
@@ -193,17 +165,10 @@ const ProfilePage = () => {
                                 <div className='flex gap-2 flex-wrap'>
                                     {user?.link && (
                                         <div className='flex gap-1 items-center '>
-                                            <>
-                                                <FaLink className='w-3 h-3 text-slate-500' />
-                                                <a
-                                                    href='https://youtube.com/@asaprogrammer_'
-                                                    target='_blank'
-                                                    rel='noreferrer'
-                                                    className='text-sm text-blue-500 hover:underline'
-                                                >
-                                                    youtube.com/@asaprogrammer_
-                                                </a>
-                                            </>
+                                            <FaLink className='w-3 h-3 text-slate-500' />
+                                            <p className='text-sm text-blue-800'>
+                                                No link to display
+                                            </p>
                                         </div>
                                     )}
                                     <div className='flex gap-2 items-center'>
