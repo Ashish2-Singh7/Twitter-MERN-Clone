@@ -163,7 +163,14 @@ const ProfilePage = () => {
                                 </div>
 
                                 <div className='flex gap-2 flex-wrap'>
-                                    {user?.link && (
+                                    {user?.link ? (
+                                        <div className='flex gap-1 items-center '>
+                                            <FaLink className='w-3 h-3 text-slate-500' />
+                                            <p className='text-sm text-blue-800'>
+                                                {user.link}
+                                            </p>
+                                        </div>
+                                    ) : (
                                         <div className='flex gap-1 items-center '>
                                             <FaLink className='w-3 h-3 text-slate-500' />
                                             <p className='text-sm text-blue-800'>
