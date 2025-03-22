@@ -12,6 +12,7 @@ import RightPanel from "./components/common/RightPanel.jsx";
 import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner.jsx";
+import Conversations from "./pages/Messages/Conversations.jsx";
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
         <Route exact path='/signup' element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
         <Route exact path='/notifications' element={authUser ? <NotificationPage /> : <Navigate to="/login" />} />
         <Route exact path='/profile/:username' element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+        <Route exact path='/conversations' element={authUser ? <Conversations /> : <Navigate to="/login" />} />
       </Routes>
       {authUser && <RightPanel />}
       <Toaster />
