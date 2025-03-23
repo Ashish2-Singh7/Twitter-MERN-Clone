@@ -6,25 +6,32 @@ import Notification from "../models/notification.model.js";
 
 export const createPost = async (req, res) => {
     try {
-        let { text, img } = req.body;
+        let { text, img, vid } = req.body;
         const userId = req.user._id.toString();
 
         const user = await User.findById(userId);
         if (!user) return res.staus(404).json({ error: "User not found" });
 
-        if (!text && !img) {
-            return res.status(400).json({ error: "Post must have text or image" });
+        if (!text && !img && !vid) {
+            return res.status(400).json({ error: "Post must have text or image or video" });
         }
 
         if (img) {
             const uploadedRespones = await cloudinary.uploader.upload(img);
             img = uploadedRespones.secure_url;
         }
+        if (vid) {
+            const uploadedRespones = await cloudinary.uploader.upload(vid, {
+                resource_type: "video"
+            });
+            vid = uploadedRespones.secure_url;
+        }
 
         const newPost = new Post({
             user: userId,
             text,
             img,
+            vid
         });
 
         await newPost.save();
@@ -51,6 +58,10 @@ export const deletePost = async (req, res) => {
         if (post.img) {
             const imgId = post.img.split("/").pop().split(".")[0];
             await cloudinary.uploader.destroy(imgId);
+        }
+        if (post.vid) {
+            const vidId = post.vid.split("/").pop().split(".")[0];
+            await cloudinary.uploader.destroy(vidId);
         }
 
         await Post.findByIdAndDelete(req.params.id);
