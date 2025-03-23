@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConversationContextProvider } from './context/ConversationContext.jsx';
+import { MessageContextProvider } from './context/MessageContext.jsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,7 +20,9 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <ConversationContextProvider>
-          <App />
+          <MessageContextProvider>
+            <App />
+          </MessageContextProvider>
         </ConversationContextProvider>
       </QueryClientProvider>
     </BrowserRouter>
