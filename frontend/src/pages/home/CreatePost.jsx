@@ -1,4 +1,5 @@
 import { CiImageOn } from "react-icons/ci";
+import { PiVideoFill } from "react-icons/pi";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
@@ -8,8 +9,10 @@ import toast from 'react-hot-toast';
 const CreatePost = () => {
   const [text, setText] = useState("");
   const [img, setImg] = useState(null);
+  const [video, setVideo] = useState(null);
 
   const imgRef = useRef(null);
+  const videoRef = useRef(null);
 
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   const queryClient = useQueryClient();
@@ -57,6 +60,16 @@ const CreatePost = () => {
     }
   };
 
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setVideo(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   return (
     <div className='flex p-4 items-start gap-4 border-b border-gray-700'>
       <div className='avatar'>
@@ -83,6 +96,18 @@ const CreatePost = () => {
             <img src={img} className='w-full mx-auto h-72 object-contain rounded' />
           </div>
         )}
+        {video && (
+          <div className='relative w-72 mx-auto'>
+            <IoCloseSharp
+              className='absolute -top-5 -right-5 text-white bg-gray-800 rounded-full w-5 h-5 cursor-pointer'
+              onClick={() => {
+                setVideo(null);
+                videoRef.current.value = null;
+              }}
+            />
+            <video src={video} controls className='w-full mx-auto h-72 object-contain rounded' />
+          </div>
+        )}
 
         <div className='flex justify-between border-t py-2 border-t-gray-700'>
           <div className='flex gap-1 items-center'>
@@ -91,8 +116,13 @@ const CreatePost = () => {
               onClick={() => imgRef.current.click()}
             />
             <BsEmojiSmileFill className='fill-primary w-5 h-5 cursor-pointer' />
+            <PiVideoFill
+              className='fill-primary w-6 h-6 cursor-pointer'
+              onClick={() => { videoRef.current.click() }}
+            />
           </div>
           <input type='file' accept="image/*" hidden ref={imgRef} onChange={handleImgChange} />
+          <input type='file' accept="video/*" hidden ref={videoRef} onChange={handleVideoChange} />
           <button className='btn btn-primary rounded-full btn-sm text-white px-4'>
             {isPending ? "Posting..." : "Post"}
           </button>

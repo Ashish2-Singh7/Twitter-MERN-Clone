@@ -15,7 +15,7 @@ const MessageContainer = () => {
   let username = "Ashish";
   const { setShowMessageContainer } = useConversationContext();
   return (
-    <div className='flex-[4_4_0] border-l h-screen border-r border-gray-700 min-h-screen'>
+    <div className='flex-[4_4_0] h-screen border-r border-gray-700 min-h-screen'>
       <div className='header flex items-center justify-between p-4 border-b border-gray-700'>
         <div className='flex items-center space-x-5'>
           <div className="back-icon" onClick={() => { setShowMessageContainer(false) }}>

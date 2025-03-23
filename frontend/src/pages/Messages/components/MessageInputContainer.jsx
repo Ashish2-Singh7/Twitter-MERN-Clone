@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { BsSend } from 'react-icons/bs';
-import { FaPlus } from 'react-icons/fa';
 
 const MessageInputContainer = () => {
     const [message, setMessage] = useState("");
@@ -23,9 +22,6 @@ const MessageInputContainer = () => {
                 <div className='absolute inset-y-0 end-0 flex items-center pe-3 space-x-3'>
                     <button type='submit' className='cursor-pointer'>
                         {loading ? <div className='loading loading-spinner'></div> : <BsSend />}
-                    </button>
-                    <button className='cursor-pointer' type='button'>
-                        {loading ? <div className='loading loading-spinner'></div> : <FaPlus />}
                     </button>
                 </div>
             </div>

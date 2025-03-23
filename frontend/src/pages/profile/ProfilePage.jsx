@@ -68,7 +68,7 @@ const ProfilePage = () => {
 
     return (
         <>
-            <div className='flex-[4_4_0]  border-r border-gray-700 min-h-screen '>
+            <div className='flex-[4_4_0] border-l border-r border-gray-700 min-h-screen '>
                 {/* HEADER */}
                 {(isLoading || isRefetching) && <ProfileHeaderSkeleton />}
                 {!isLoading && !isRefetching && !user && <p className='text-center text-lg mt-4'>User not found</p>}

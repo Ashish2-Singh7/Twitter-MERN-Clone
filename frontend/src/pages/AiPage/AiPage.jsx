@@ -8,7 +8,7 @@ const AiPage = () => {
     console.log(aiConversationId);
 
     return (
-        <div className='flex-[4_4_0] flex flex-col border-r border-gray-700 relative h-screen overflow-y-auto aiLogoBg'>
+        <div className='flex-[4_4_0] flex flex-col border-l border-r border-gray-700 relative h-screen overflow-y-auto aiLogoBg'>
             <Messages />
             <MessageInputContainer />
         </div>
