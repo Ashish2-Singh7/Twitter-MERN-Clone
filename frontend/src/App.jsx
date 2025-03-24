@@ -57,7 +57,7 @@ function App() {
         <Route exact path='/notifications' element={authUser ? <NotificationPage /> : <Navigate to="/login" />} />
         <Route exact path='/profile/:username' element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
         <Route exact path='/conversations' element={authUser ? <Conversations /> : <Navigate to="/login" />} />
-        <Route exact path='/grokAi/:aiConversationId' element={authUser ? <AiPage /> : <Navigate to="/login" />} />
+        <Route exact path='/grokAi' element={authUser ? <AiPage /> : <Navigate to="/login" />} />
       </Routes>
       {authUser && <RightPanel />}
       <Toaster />
