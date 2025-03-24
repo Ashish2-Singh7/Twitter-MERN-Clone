@@ -18,14 +18,14 @@ const CreatePost = () => {
   const queryClient = useQueryClient();
 
   const { mutate: createPost, isPending, isError, error } = useMutation({
-    mutationFn: async ({ text, img }) => {
+    mutationFn: async ({ text, img, vid }) => {
       try {
         const res = await fetch("/api/posts/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ text, img }),
+          body: JSON.stringify({ text, img, vid }),
         });
 
         const data = await res.json();
@@ -39,6 +39,7 @@ const CreatePost = () => {
     onSuccess: () => {
       setText("");
       setImg(null);
+      setVideo(null);
       toast.success("Post created successfully");
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     }
@@ -46,7 +47,7 @@ const CreatePost = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createPost({ text, img });
+    createPost({ text, img, vid: video });
   };
 
   const handleImgChange = (e) => {

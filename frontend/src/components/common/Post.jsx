@@ -170,6 +170,14 @@ const Post = ({ post }) => {
                                 alt=''
                             />
                         )}
+                        {post.vid && (
+                            <video
+                                src={post.vid}
+                                controls
+                                className='h-80 object-contain rounded-lg border border-gray-700'
+                                alt=''
+                            />
+                        )}
                     </div>
                     <div className='flex justify-between mt-3'>
                         <div className='flex gap-4 items-center w-2/3 justify-between'>
