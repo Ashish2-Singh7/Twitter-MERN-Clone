@@ -15,6 +15,6 @@ export const getAiResults = async (prompt) => {
 
     } catch (error) {
         console.log("Error in getAiResults service", error.message);
-        return res.status(500).json({ error: "INTERNAL SERVER ERROR" });
+        return;
     }
 }

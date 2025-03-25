@@ -21,9 +21,9 @@ io.on("connection", (socket) => {
     console.log("a user connected");
 
     socket.on('ai-chat-message', async (data) => {
-
+        socket.emit("aiMessageLoading", true);
         const prompt = data.message;
-
+        
         const result = await getAiResults(prompt);
         socket.emit('ai-chat-message', {
             message: result,
@@ -32,6 +32,7 @@ io.on("connection", (socket) => {
                 email: 'AI'
             }
         });
+        socket.emit("aiMessageLoading", false);
         return;
     })
 

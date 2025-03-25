@@ -10,8 +10,9 @@ export const useMessageContext = () => {
 
 export const MessageContextProvider = ({ children }) => {
     const [messageType, setMessageType] = useState("conversation"); // conversation or ai
+    const [AiMessages, setAiMessages] = useState([]);
 
-    return <MessageContext.Provider value={{ messageType, setMessageType }}>
+    return <MessageContext.Provider value={{ messageType, setMessageType, AiMessages, setAiMessages }}>
         {children}
     </MessageContext.Provider>
 }

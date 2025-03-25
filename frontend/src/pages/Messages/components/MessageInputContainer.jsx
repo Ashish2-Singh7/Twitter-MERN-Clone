@@ -1,11 +1,30 @@
 import React, { useState } from 'react'
+
+import { useMessageContext } from '../../../context/MessageContext';
+
 import { BsSend } from 'react-icons/bs';
+
+import toast from 'react-hot-toast';
+
+import useSendAiMessage from '../../../hooks/useSendAiMessage';
 
 const MessageInputContainer = () => {
     const [message, setMessage] = useState("");
+    const { setAiMessages } = useMessageContext();
+    const { sendAiMessage } = useSendAiMessage();
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (message.length === 0) {
+            toast.error("Field can't be empty");
+            return;
+        }
+        sendAiMessage('ai-chat-message', {
+            message,
+            sender: "user"
+        })
+        setAiMessages(prevState => [...prevState, { sender: "user", message }])
+        setMessage("");
     }
 
     const loading = false;
