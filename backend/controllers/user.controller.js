@@ -3,6 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 
 import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
+import Conversation from "../models/conversation.model.js";
 
 export const getUserProfile = async (req, res) => {
     const { username } = req.params;
@@ -145,6 +146,60 @@ export const updateUserProfile = async (req, res) => {
 
     } catch (error) {
         console.log("Error in updateUserProfile controller", error.message);
+        return res.status(500).json({ error: "INTERNAL SERVER ERROR" });
+    }
+}
+
+export const getConversations = async (req, res) => {
+    try {
+        const userID = req.user._id;
+        const conversations = await Conversation.findOne({
+            participants: { $in: [userID] }
+        }).populate("participants", "-password");;
+
+        if (!conversations) {
+            // RECOMMEND USER TO CONVERSATE - FUNCTION 
+
+            // 1. Fetch the user's followers and following
+            const user = await User.findById(userID).populate("followers following", "-password");
+            if (!user) return res.status(404).json({ error: "User not found" });
+
+            const followers = user.followers || [];
+            const following = user.following || [];
+
+            // 2. Fetch all users except the current user
+            const allUsers = await User.find({ _id: { $ne: userID } }).select("-password");
+
+            // 3. Merge lists, prioritizing followers & following
+            const priorityUsers = [...new Set([...followers, ...following])]; // Avoid duplicates
+            const otherUsers = allUsers.filter((u) => !priorityUsers.some((p) => p._id.equals(u._id)));
+
+            // 4. Pick 4 users, prioritizing followers/following
+            let selectedUsers = [];
+
+            // Get up to 2 users from priority list (followers & following)
+            while (selectedUsers.length < 2 && priorityUsers.length > 0) {
+                const randomIndex = Math.floor(Math.random() * priorityUsers.length);
+                selectedUsers.push(priorityUsers[randomIndex]);
+                priorityUsers.splice(randomIndex, 1); // Remove selected user
+            }
+
+            // Get remaining users from other users
+            while (selectedUsers.length < 4 && otherUsers.length > 0) {
+                const randomIndex = Math.floor(Math.random() * otherUsers.length);
+                selectedUsers.push(otherUsers[randomIndex]);
+                otherUsers.splice(randomIndex, 1); // Remove selected user
+            }
+
+            return res.status(200).json({ recommendedUsers: selectedUsers });
+        }
+        else {
+            return res.status(200).json(conversations);
+        }
+
+
+    } catch (error) {
+        console.log("Error in getFollowingList controller", error.message);
         return res.status(500).json({ error: "INTERNAL SERVER ERROR" });
     }
 }
