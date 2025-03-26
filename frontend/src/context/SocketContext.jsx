@@ -19,7 +19,8 @@ export const SocketContextProvider = ({ children }) => {
 
     useEffect(() => {
         if (authUser) {
-            const socket = io('http://localhost:8000', {
+            // const socket = io('http://localhost:8000', {
+            const socket = io('https://twitter-mern-clone-rts8.onrender.com', {
                 query: {
                     userId: authUser._id
                 }
