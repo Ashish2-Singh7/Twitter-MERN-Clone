@@ -1,21 +1,44 @@
-# Twitter-MERN-Clone
+<div>
+  <h1>Twitter-MERN-Clone 🚀 <img src="./frontend/public/x.svg" width="50" alt="X Logo" align="left"></h1>
+</div>
 
-This is a **Twitter clone** built with the **MERN** stack (MongoDB, Express, React, Node.js) to demonstrate my skills and understanding of full-stack development. The application mimics basic Twitter functionality like posting tweets, following users, and user authentication.
+This is a **Twitter clone** built with the **MERN** stack (MongoDB, Express, React, Node.js) to demonstrate my skills and understanding of full-stack development. The application mimics Twitter functionality like posting tweets, following users, messaging, AI-powered interactions, and user authentication.
 
+---
 
-## **Technologies Used**
+## 🛠 **Technologies Used**
 - **MERN Stack**: MongoDB, Express, React, Node.js
-- **Cloudinary**: For image and media hosting
-- **DaisyUI**: For responsive UI components
-- **React-Query**: For efficient state management and API data fetching
+- **Google Gemini AI**: AI-powered interaction similar to Twitter's Grok AI
+- **Socket.IO**: For **real-time messaging** 
+- **Cloudinary**: For **image & video hosting** 
+- **DaisyUI**: For a sleek, **responsive UI** 
+- **React-Query**: For efficient state & data fetching 
+
+---
+
+## 🚀 **Features**
+✅ **User Authentication** – Sign up, log in, and manage your profile   
+✅ **AI-Interaction** – Ask your queries to you personal assistant, built with Gemini.   
+✅ **Post Tweets** – Share your thoughts with text, images, or videos!   
+✅ **Like, Follow & Unfollow** – Interact with other users!   
+✅ **Direct Messaging** – Chat with friends in **real-time**   
+✅ **Beautiful UI** – Fully **responsive & optimized** with DaisyUI 
+
+---
+
+### **✨ New Updates**
+- **Grok AI (Gemini Model) Integration**: AI-powered feature similar to Twitter's Grok, allowing users to engage in AI-generated content and interactions.
+- **Real-time Messaging**: A private chat system (like Facebook Messenger) using **Socket.IO**, allowing users to send and receive messages instantly.
+- **Video Posts**: Users can now upload **videos** in their posts, stored and managed via **Cloudinary**.
+
+---
+
+## 🌍 **Live Preview**
+🚀 Check out the app live **[here](https://twitter-mern-clone-rts8.onrender.com)**! 🔥
+
+---
+
+_Last updated: 26-03-2025_
 
 
-## **Features**
-- **User Authentication**: Users can sign up, log in, and access their profile.
-- **Post Tweets**: Users can post and delete tweets.
-- **Follow/Unfollow**: Users can follow and unfollow other users.
-- **Media Upload**: Users can upload images along with their tweets.
-- **Responsive UI**: The application is fully responsive and uses DaisyUI components.
 
-## **Live Preview**
-You can preview the live version of the app [here](https://twitter-mern-clone-rts8.onrender.com).
