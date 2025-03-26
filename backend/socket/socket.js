@@ -16,14 +16,25 @@ const io = new Server(server, {
     },
 });
 
+export const getRecieverSocketId = (recieverId) => {
+    return userSocketMap[recieverId];
+}
+
+const userSocketMap = {}; // {userId: socketId};
+
 io.on("connection", (socket) => {
     // console.log("a user connected", socket.id);
     console.log("a user connected");
 
+    const userId = socket.handshake.query.userId;
+    if (userId != 'undefined') userSocketMap[userId] = socket.id;
+
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
     socket.on('ai-chat-message', async (data) => {
         socket.emit("aiMessageLoading", true);
         const prompt = data.message;
-        
+
         const result = await getAiResults(prompt);
         socket.emit('ai-chat-message', {
             message: result,
@@ -38,6 +49,8 @@ io.on("connection", (socket) => {
 
     socket.on('disconnect', () => {
         console.log("a user disconnected");
+        delete userSocketMap[userId];
+        io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });
 });
 

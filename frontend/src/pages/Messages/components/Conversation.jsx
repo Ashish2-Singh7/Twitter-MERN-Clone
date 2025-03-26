@@ -6,16 +6,19 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 
 import { useConversationContext } from '../../../context/ConversationContext';
 import { formatPostDate } from '../../../utils/date';
+import { useSocketContext } from '../../../context/SocketContext';
 
 const Conversation = ({ profileImg, fullName, recomend, username, user, latestMessage }) => {
     const { setShowMessageContainer } = useConversationContext();
+    const { onlineUsers } = useSocketContext();
+    const isOnline = onlineUsers?.includes(user._id);
 
     return (
         <div className='border-b border-gray-700 flex items-center justify-between p-5 cursor-pointer text-left' onClick={() => { setShowMessageContainer(user) }}>
             <div className="right-card flex items-center space-x-5">
                 <Link to={`/profile/${username}`}>
                     <div className="avatar">
-                        <div className="w-12 rounded-full">
+                        <div className={`w-12 rounded-full ${isOnline ? "avatar-online" : ""}`}>
                             <img src={profileImg || "./avatar-placeholder.png"} />
                         </div>
                     </div>

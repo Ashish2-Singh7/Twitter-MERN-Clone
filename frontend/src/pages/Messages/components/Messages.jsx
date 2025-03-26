@@ -63,7 +63,7 @@ const Messages = () => {
                                 key={ele._id}
                                 ref={lastMessageRef}
                             >
-                                <Message messageType={messageType} recieverUser={showMessageContainer} senderUser={authUser} message={ele} />
+                                <Message messageType={messageType} recieverUser={showMessageContainer} senderUser={authUser} message={ele} shouldShake={ele.shouldShake} />
                             </div>
                         );
                     })}

@@ -14,6 +14,7 @@ export const useSocketContext = () => {
 export const SocketContextProvider = ({ children }) => {
 
     const [socket, setSocket] = useState(null);
+    const [onlineUsers, setOnlineUsers] = useState(null);
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
     useEffect(() => {
@@ -39,5 +40,5 @@ export const SocketContextProvider = ({ children }) => {
     }, [authUser]);
 
 
-    return <SocketContext.Provider value={{ socket }}>{children}</SocketContext.Provider>;
+    return <SocketContext.Provider value={{ socket, onlineUsers, setOnlineUsers }}>{children}</SocketContext.Provider>;
 }

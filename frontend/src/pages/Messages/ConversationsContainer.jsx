@@ -8,11 +8,13 @@ import { IoSettingsOutline } from 'react-icons/io5';
 import { useQuery } from '@tanstack/react-query';
 import RecommendedCard from './components/RecommendedCard';
 import useLatestMessage from '../../hooks/useLatestMessage';
+import useListenOnlineUsers from '../../hooks/useListenOnlineUsers';
 
 const ConversationsContainer = () => {
 
     const { getLatestMessage } = useLatestMessage();
 
+    useListenOnlineUsers();
 
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
