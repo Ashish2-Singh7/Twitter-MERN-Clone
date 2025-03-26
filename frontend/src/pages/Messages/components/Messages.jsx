@@ -6,39 +6,67 @@ import MessageSkeleton from '../../../components/skeletons/MessageSkeleton';
 import { useMessageContext } from '../../../context/MessageContext';
 
 import useListenMessages from '../../../hooks/useListenMessages';
+import { useConversationContext } from '../../../context/ConversationContext';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const Messages = () => {
+    const { showMessageContainer } = useConversationContext();
     const { AiMessages } = useMessageContext();
     const { messageType } = useMessageContext();
 
     const lastMessageRef = useRef();
 
-    let loading = false;
-    let messages = [];
-
     const { aiMessageLoading } = useListenMessages();
+
+    const queryClient = useQueryClient();
+
+    const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+
+    const { data: messages, isLoading } = useQuery({
+        queryKey: ["fetchMessages"],
+        queryFn: async () => {
+            try {
+                const res = await fetch(`/api/messages/${showMessageContainer?._id}`);
+                const data = await res.json();
+                if (!res.ok) { // or can write if(data.error)
+                    throw new Error(data.error || "Something went wrong");
+                }
+                return data;
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+        retry: false,
+        throwOnError: () => {
+            queryClient.setQueryData(["fetchMessages"], null);
+        }
+    });
 
     useEffect(() => {
         setTimeout(() => {
             lastMessageRef.current?.scrollIntoView({ behavior: "smooth" })
         }, 50);
-    }, [AiMessages]);
+    }, [AiMessages, messages]);
 
     return (
         <>
             {messageType === "conversation" ? (
                 <div className='p-5 flex-1 overflow-auto'>
-                    {loading && [...Array(3)].map((_idx) => <MessageSkeleton key={_idx} />)}
-                    {!loading && messages.length === 0 && (
-                        <p className='text-center'>Send a message to start the conversation</p>
+                    {isLoading && [...Array(3)].map((_idx) => <MessageSkeleton key={_idx} />)}
+                    {(!isLoading && !messages) && (
+                        <p className='text-center'>💬 Say hello & start the conversation! 😊🚀</p>
                     )}
-                    <Message messageType={messageType} />
-                    <Message messageType={messageType} />
-                    <Message messageType={messageType} />
-                    <Message messageType={messageType} />
-                    <Message messageType={messageType} />
-                    <Message messageType={messageType} />
-                    <Message messageType={messageType} />
+                    {(!isLoading && messages?.length !== 0 && messages) && messages.map((ele) => {
+                        return (
+                            <div
+                                key={ele._id}
+                                ref={lastMessageRef}
+                            >
+                                <Message messageType={messageType} recieverUser={showMessageContainer} senderUser={authUser} message={ele} />
+                            </div>
+                        );
+                    })}
                 </div>
             )
                 : (

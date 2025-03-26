@@ -19,7 +19,7 @@ export const sendMessages = async (req, res) => {
             return res.status(400).json({ error: "User not found" });
         }
 
-        let conversation = await Conversation.find({
+        let conversation = await Conversation.findOne({
             participants: { $all: [senderId, recieverId] }
         });
 
@@ -55,7 +55,7 @@ export const getMessages = async (req, res) => {
         const { id: recieverId } = req.params;
         const userId = req.user._id;
 
-        let conversation = await Conversation.find({
+        let conversation = await Conversation.findOne({
             participants: { $all: [recieverId, userId] }
         }).populate("messages");
 

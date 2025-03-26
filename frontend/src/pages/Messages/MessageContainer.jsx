@@ -12,23 +12,22 @@ import { useConversationContext } from '../../context/ConversationContext';
 
 
 const MessageContainer = () => {
-  let username = "Ashish";
-  const { setShowMessageContainer } = useConversationContext();
+  const { setShowMessageContainer, showMessageContainer } = useConversationContext();
   return (
     <div className='flex-[4_4_0] h-screen border-r border-gray-700 min-h-screen'>
       <div className='header flex items-center justify-between p-4 border-b border-gray-700'>
         <div className='flex items-center space-x-5'>
-          <div className="back-icon" onClick={() => { setShowMessageContainer(false) }}>
+          <div className="back-icon" onClick={() => { setShowMessageContainer(null) }}>
             <IoArrowBack className='w-6 h-6 cursor-pointer' />
           </div>
-          <Link to={`/profile/${username}`}>
+          <Link to={`/profile/${showMessageContainer?.username}`}>
             <div className='flex space-x-3 items-center'>
               <div className="avatar">
                 <div className="w-10 rounded-full">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                  <img src={showMessageContainer?.profileImg || "./avatar-placeholder.png"} />
                 </div>
               </div>
-              <p className='text-lg font-bold'>Ashish</p>
+              <p className='text-lg font-bold'>{showMessageContainer?.username}</p>
             </div>
           </Link>
         </div>

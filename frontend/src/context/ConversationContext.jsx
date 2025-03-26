@@ -9,7 +9,7 @@ export const useConversationContext = () => {
 };
 
 export const ConversationContextProvider = ({ children }) => {
-    const [showMessageContainer, setShowMessageContainer] = useState(false);
+    const [showMessageContainer, setShowMessageContainer] = useState(null);
 
     return <ConversationContext.Provider value={{ showMessageContainer, setShowMessageContainer }}>
         {children}

@@ -7,11 +7,49 @@ import { BsSend } from 'react-icons/bs';
 import toast from 'react-hot-toast';
 
 import useSendAiMessage from '../../../hooks/useSendAiMessage';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useConversationContext } from '../../../context/ConversationContext';
 
 const MessageInputContainer = () => {
     const [message, setMessage] = useState("");
-    const { setAiMessages } = useMessageContext();
+
+    const queryClient = useQueryClient();
+
+    const { setAiMessages, messageType } = useMessageContext();
+    const { showMessageContainer } = useConversationContext();
+
     const { sendAiMessage } = useSendAiMessage();
+
+    const { mutate: sendMessage, isPending: isSending } = useMutation({
+        mutationFn: async () => {
+            try {
+                const res = await fetch(`/api/messages/send/${showMessageContainer._id}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text: message })
+                });
+                const data = await res.json()
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to send the message');
+                }
+                return data;
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+        onSuccess: (data) => {
+            setMessage("");
+            queryClient.setQueryData(["fetchMessages"], (oldData) => {
+                if (oldData) {
+                    return [...oldData, data];
+                }
+                else {
+                    return [data];
+                }
+            });
+        }
+    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -19,15 +57,19 @@ const MessageInputContainer = () => {
             toast.error("Field can't be empty");
             return;
         }
-        sendAiMessage('ai-chat-message', {
-            message,
-            sender: "user"
-        })
-        setAiMessages(prevState => [...prevState, { sender: "user", message }])
-        setMessage("");
+        if (messageType === "ai") {
+            sendAiMessage('ai-chat-message', {
+                message,
+                sender: "user"
+            })
+            setAiMessages(prevState => [...prevState, { sender: "user", message }])
+            setMessage("");
+        }
+        if (messageType === "conversation") {
+            sendMessage();
+        }
     }
 
-    const loading = false;
     return (
         <form className='px-4 my-3' onSubmit={handleSubmit}>
             <div className="w-full relative">
@@ -39,9 +81,12 @@ const MessageInputContainer = () => {
                     onChange={(e) => { setMessage(e.target.value) }}
                 />
                 <div className='absolute inset-y-0 end-0 flex items-center pe-3 space-x-3'>
-                    <button type='submit' className='cursor-pointer'>
-                        {loading ? <div className='loading loading-spinner'></div> : <BsSend />}
-                    </button>
+                    {messageType === "ai" && <button type='submit' className='cursor-pointer'>
+                        <BsSend />
+                    </button>}
+                    {messageType === "conversation" && <button type='submit' className='cursor-pointer'>
+                        {isSending ? <div className='loading loading-spinner'></div> : <BsSend />}
+                    </button>}
                 </div>
             </div>
         </form>

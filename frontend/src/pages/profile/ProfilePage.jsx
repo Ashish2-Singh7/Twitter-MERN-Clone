@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton.jsx";
@@ -9,6 +9,7 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
+import { FaFacebookMessenger } from "react-icons/fa";
 
 import { useQuery } from "@tanstack/react-query";
 import { formatMemberSinceDate } from "../../utils/date/index.js";
@@ -24,6 +25,8 @@ const ProfilePage = () => {
     const coverImgRef = useRef(null);
     const profileImgRef = useRef(null);
     const { username } = useParams();
+
+    const navigate = useNavigate();
 
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
@@ -43,6 +46,15 @@ const ProfilePage = () => {
             }
         }
     });
+
+    const messengerHandler = () => {
+        // console.log(authUser);
+        // setShowMessageContainer(authUser);
+        // localStorage.setItem("messageUser", JSON.stringify(authUser)); // Store authUser
+        // navigate('/conversations');
+        console.log(authUser);
+        navigate('/conversations', { state: { user: user } });
+    }
 
 
     const { updateProfile, isUpdatingProfile } = useUpdateUserProfile();
@@ -129,7 +141,7 @@ const ProfilePage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className='flex justify-end px-4 mt-5'>
+                            <div className={`flex justify-end px-4 mt-5 items-center ${!isMyProfile && "space-x-5"}`}>
                                 {isMyProfile && <EditProfileModal authUser={authUser} />}
                                 {!isMyProfile && (
                                     <button
@@ -153,6 +165,10 @@ const ProfilePage = () => {
                                         {isUpdatingProfile ? "Updating..." : "Update"}
                                     </button>
                                 )}
+                                {!isMyProfile && <FaFacebookMessenger
+                                    className="text-2xl cursor-pointer"
+                                    onClick={messengerHandler}
+                                />}
                             </div>
 
                             <div className='flex flex-col gap-4 mt-14 px-4'>

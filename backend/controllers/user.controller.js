@@ -153,11 +153,11 @@ export const updateUserProfile = async (req, res) => {
 export const getConversations = async (req, res) => {
     try {
         const userID = req.user._id;
-        const conversations = await Conversation.findOne({
+        const conversations = await Conversation.find({
             participants: { $in: [userID] }
-        }).populate("participants", "-password");;
+        }).populate("participants messages", "-password");
 
-        if (!conversations) {
+        if (conversations.length === 0) {
             // RECOMMEND USER TO CONVERSATE - FUNCTION 
 
             // 1. Fetch the user's followers and following
